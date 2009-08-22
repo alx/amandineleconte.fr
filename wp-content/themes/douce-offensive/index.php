@@ -30,7 +30,7 @@
 					<div id="main_photo">
 						<?php 
 							// Just display photo
-							echo ereg_replace( "<div.*<\/div>", "", get_the_content() );
+							echo douce_main($post);
 						?>
 					</div><!-- entry -->
 					
@@ -80,14 +80,8 @@
 					
 				}
 				else {
-					$excerpt = get_the_excerpt();
-
-					if($i == 0) $excerpt = ereg_replace( "nav_photo", "nav_photo selected_photo", $excerpt );
-
-					// add new class without left margin
-					if($i%4 == 0) $excerpt = ereg_replace( "nav_photo", "nav_photo first_column", $excerpt );
-
-					echo $excerpt;
+					// Display thumnail with selected-photo and new_row style
+					echo douce_thumbnail($post, ($i == 0), ($i%4 == 0));
 				}
 			}
 			
