@@ -51,7 +51,8 @@ Support:
 First, read this file.
 Then read phpthumb.faq.txt
 Then run /demo/phpThumb.demo.check.php
-If you still think it's a bug, email info@silisoftware.com
+If you still think it's a bug, or can't figure it out,
+please go to http://support.silisoftware.com
 
 
 ======
@@ -382,6 +383,7 @@ fltr = filter system. Call as an array as follows:
          <a> is the alignment (one of BR, BL, TR, TL, C, R, L,
              T, B, * where B=bottom, T=top, L=left, R=right,
              C=centre, *=tile);
+             note: * does not work for built-in font "wmt"
              *or*
              an absolute position in pixels (from top-left
              corner of canvas to top-left corner of overlay)

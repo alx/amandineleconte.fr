@@ -161,17 +161,14 @@ if (!empty($PHPTHUMB_CONFIG)) {
         	$value = $_GET['impath'];
 		}
 		
-        $phpThumb->setParameter($keyname, $value);
-			
-		if (!eregi('password', $key)) {
+		$phpThumb->setParameter($keyname, $value);
+		if (!eregi('password|mysql', $key)) {
 			$phpThumb->DebugMessage('setParameter('.$keyname.', '.$phpThumb->phpThumbDebugVarDump($value).')', __FILE__, __LINE__);
 		}
 	}
 } else {
 	$phpThumb->DebugMessage('$PHPTHUMB_CONFIG is empty', __FILE__, __LINE__);
 }
-
-
 
 if (@$_GET['src'] && !@$PHPTHUMB_CONFIG['allow_local_http_src'] && eregi('^http://'.@$_SERVER['HTTP_HOST'].'(.+)', @$_GET['src'], $matches)) {
 	$phpThumb->ErrorImage('It is MUCH better to specify the "src" parameter as "'.$matches[1].'" instead of "'.$matches[0].'".'."\n\n".'If you really must do it this way, enable "allow_local_http_src" in phpThumb.config.php');
@@ -244,7 +241,7 @@ if (!empty($PHPTHUMB_DEFAULTS) && is_array($PHPTHUMB_DEFAULTS)) {
 	}
 }
 
-// deprecated: 'err', 'file', 'goto',
+// deprecated: 'err', 'file', 'goto', //Manuel: added impath
 $allowedGETparameters = array('impath', 'src', 'new', 'w', 'h', 'wp', 'hp', 'wl', 'hl', 'ws', 'hs', 'f', 'q', 'sx', 'sy', 'sw', 'sh', 'zc', 'bc', 'bg', 'bgt', 'fltr', 'xto', 'ra', 'ar', 'aoe', 'far', 'iar', 'maxb', 'down', 'phpThumbDebug', 'hash', 'md5s', 'sfn', 'dpi', 'sia', 'nocache');
 foreach ($_GET as $key => $value) {
 	if (@$PHPTHUMB_DEFAULTS_DISABLEGETPARAMS && ($key != 'src')) {
@@ -283,7 +280,7 @@ $CanPassThroughDirectly = true;
 if ($phpThumb->rawImageData) {
 	// data from SQL, should be fine
 } elseif (eregi('^http\://.+\.(jpe?g|gif|png)$', $phpThumb->src)) {
-	// assume is ok if no other parameters specified
+	// assume is ok to passthru if no other parameters specified
 } elseif (!@is_file($phpThumb->sourceFilename)) {
 	$phpThumb->DebugMessage('$CanPassThroughDirectly=false because !@is_file('.$phpThumb->sourceFilename.')', __FILE__, __LINE__);
 	$CanPassThroughDirectly = false;
@@ -362,7 +359,7 @@ while ($CanPassThroughDirectly && $phpThumb->src) {
 		if (!@$_GET['w'] && !@$_GET['wp'] && !@$_GET['wl'] && !@$_GET['ws'] && !@$_GET['h'] && !@$_GET['hp'] && !@$_GET['hl'] && !@$_GET['hs']) {
 			// no resizing needed
 			$phpThumb->DebugMessage('Passing "'.$SourceFilename.'" through directly, no resizing required ("'.$phpThumb->getimagesizeinfo[0].'"x"'.$phpThumb->getimagesizeinfo[1].'")', __FILE__, __LINE__);
-		} elseif (($phpThumb->getimagesizeinfo[0] <= @$_GET['w']) && ($phpThumb->getimagesizeinfo[1] <= @$_GET['h']) && ((@$_GET['w'] == $phpThumb->getimagesizeinfo[0]) || (@$_GET['h'] == $phpThumb->getimagesizeinfo[1]))) {
+		} elseif ((($phpThumb->getimagesizeinfo[0] <= @$_GET['w']) || ($phpThumb->getimagesizeinfo[1] <= @$_GET['h'])) && ((@$_GET['w'] == $phpThumb->getimagesizeinfo[0]) || (@$_GET['h'] == $phpThumb->getimagesizeinfo[1]))) {
 			// image fits into 'w'x'h' box, and at least one dimension matches exactly, therefore no resizing needed
 			$phpThumb->DebugMessage('Passing "'.$SourceFilename.'" through directly, no resizing required ("'.$phpThumb->getimagesizeinfo[0].'"x"'.$phpThumb->getimagesizeinfo[1].'" fits inside "'.@$_GET['w'].'"x"'.@$_GET['h'].'")', __FILE__, __LINE__);
 		} else {
